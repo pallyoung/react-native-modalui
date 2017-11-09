@@ -1,0 +1,37 @@
+{
+  "name": "react-native-modalui",
+  "version": "1.0.0",
+  "description": "react-native-modalui provide more animation types for you.",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "prop-types":"*"
+  },
+  "devDependencies": {
+    "react":"*",
+    "react-native":"*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pallyoung/react-native-modalui.git"
+  },
+  "keywords": [
+    "modal",
+    "popup",
+    "react",
+    "react-native",
+    "ui",
+    "component"
+  ],
+  "author": "Spencer Ye",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pallyoung/react-native-modalui/issues"
+  },
+  "homepage": "https://github.com/pallyoung/react-native-modalui#readme"
+}
