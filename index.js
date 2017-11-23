@@ -23,11 +23,12 @@ class ModalUI extends Component {
         isVisible: PropTypes.bool,
         animationType: PropTypes.oneOf(['fade', 'slideUp', 'slideDown', 'slideLeft', 'slideRight', 'none']),
         easing: PropTypes.any,
+        duration: PropTypes.number,
         onModalShow: PropTypes.func,
         onModalHide: PropTypes.func,
         onBackPress: PropTypes.func,
         onBackdropPress: PropTypes.func,
-        style: View.propTypes.style
+        style: View.propTypes.style,
     }
     static defaultProps = {
         isVisible: false,
