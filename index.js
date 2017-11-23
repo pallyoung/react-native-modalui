@@ -28,7 +28,7 @@ class ModalUI extends Component {
         onModalHide: PropTypes.func,
         onBackPress: PropTypes.func,
         onBackdropPress: PropTypes.func,
-        style:View.propTypes.style
+        style: View.propTypes.style
     }
     static defaultProps = {
         isVisible: false,
@@ -40,8 +40,8 @@ class ModalUI extends Component {
         super(...props);
         this.state = {
             visiable: false,
-            height:0,
-            width:0
+            height: 0,
+            width: 0
         }
         this._animatedValue = new Animated.Value(0);
     }
@@ -49,16 +49,16 @@ class ModalUI extends Component {
         if (this.props.isVisible) {
             this._show();
         }
-        BackHandler.addEventListener('hardwareBackPress',this._onBackPress);
+        BackHandler.addEventListener('hardwareBackPress', this._onBackPress);
     }
     componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress',this._onBackPress);
+        BackHandler.removeEventListener('hardwareBackPress', this._onBackPress);
     }
-    
+
     componentWillReceiveProps(nextProps) {
-        
+
     }
-    
+
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.isVisible !== this.props.isVisible) {
             if (this.props.isVisible) {
@@ -69,24 +69,24 @@ class ModalUI extends Component {
         }
     }
     _show() {
-        this.setState({visible:true});
+        this.setState({ visible: true });
         var easing = this.props.easing;
         if (this.props.animationType == 'none') {
             this._animatedValue.setValue(1);
-            this.props.onShow && this.props.onShow();
+            this._onShow();
         } else {
             Animated.timing(this._animatedValue, {
                 easing,
                 toValue: 1,
                 duration: this.props.duration
-            }).start(() => this._onShow && this._onShow());
+            }).start(this._onShow);
         }
     }
-    _onShow() {
+    _onShow = () => {
         this.props.onModalShow && this.props.onModalShow();
     }
-    _onHide() {
-        this.setState({visible:false});
+    _onHide = () => {
+        this.setState({ visible: false });
         this.props.onModalHide && this.props.onModalHide();
     }
     _hide() {
@@ -99,28 +99,28 @@ class ModalUI extends Component {
                 easing,
                 toValue: 0,
                 duration: this.props.duration
-            }).start(() => this._onHide());
+            }).start(this._onHide);
         }
     }
-    _onBackPress = ()=>{
-        this.props.onBackPress&&this.props.onBackPress();
+    _onBackPress = () => {
+        this.props.onBackPress && this.props.onBackPress();
     }
-    _onBackdropPress = ()=>{
-        return this.props.onBackdropPress&&this.props.onBackdropPress();
+    _onBackdropPress = () => {
+        return this.props.onBackdropPress && this.props.onBackdropPress();
     }
-    _onLayout(e){
-        var {height,width} = e.nativeEvent.layout;
-        if(height!==this.state.height||width!==this.state.width){
-            this.setState({height,width});
+    _onLayout(e) {
+        var { height, width } = e.nativeEvent.layout;
+        if (height !== this.state.height || width !== this.state.width) {
+            this.setState({ height, width });
         }
         this.props.onLayout && this.props.onLayout(e);
     }
     render() {
-        if(!this.state.visible){
+        if (!this.state.visible) {
             return null;
         }
         let opacity, translateY, translateX;
-        let {height,width} = this.state;
+        let { height, width } = this.state;
         switch (this.props.animationType) {
             case 'fade':
                 opacity = this._animatedValue.interpolate({
@@ -169,14 +169,16 @@ class ModalUI extends Component {
         }
         return (
             <TouchView
-                onTouchEnd = {this._onBackdropPress}
-                activeOpacity = {1}
-                onLayout = {(e)=>this._onLayout(e)}
-                children={this.state.height&&this.state.width&&this.props.children||null}
-                style={[styles.base, 
-                        this.props.style,
-                        {opacity,
-                        transform: [{ translateY},{translateX}] }]} />
+                onTouchEnd={this._onBackdropPress}
+                activeOpacity={1}
+                onLayout={(e) => this._onLayout(e)}
+                children={this.state.height && this.state.width && this.props.children || null}
+                style={[styles.base,
+                this.props.style,
+                {
+                    opacity,
+                    transform: [{ translateY }, { translateX }]
+                }]} />
         );
     }
 }
@@ -189,7 +191,7 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         flexDirection: 'column',
-        backgroundColor:'rgba(120,120,120,0.5)'
+        backgroundColor: 'rgba(120,120,120,0.5)'
     }
 });
 

@@ -62,12 +62,15 @@ export default class App extends Component<{}> {
           <Text>NONE</Text>
         </TouchableOpacity>
         <Modal 
+          onModalShow={()=>console.log('show')}
+          onModalHide={()=>console.log('hide')}
           style={styles.container}
           animationType = {this.state.animationType}
           onBackdropPress = {this._hideModal}
           isVisible = {this.state.isVisible}>
         <TouchableOpacity 
           style = {styles.button}
+
           onPress = {this._hideModal}>
           <Text>HIDE</Text>
         </TouchableOpacity>
