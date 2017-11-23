@@ -4,7 +4,7 @@
  */
 'use strict'
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import {
     StyleSheet,
     View,
@@ -12,88 +12,118 @@ import {
     Animated,
     Easing,
     Dimensions,
-    InteractionManager
+    InteractionManager,
+    BackHandler
 } from 'react-native';
 import PropTypes from 'prop-types';
-let {width,height} = Dimensions.get('window');
-export default class ModalUI extends Component {
+let { width, height } = Dimensions.get('window');
+const TouchView = Animated.createAnimatedComponent(View);
+class ModalUI extends Component {
     static propTypes = {
-        animationType:PropTypes.oneOf(['fade','slideUp','slideDown','slideLeft','slideRight','none']),
-        backgroundColor:PropTypes.string,
-        easing:PropTypes.any
+        isVisible: PropTypes.bool,
+        animationType: PropTypes.oneOf(['fade', 'slideUp', 'slideDown', 'slideLeft', 'slideRight', 'none']),
+        opacity: PropTypes.number,
+        easing: PropTypes.any,
+        onModalShow: PropTypes.func,
+        onModalHide: PropTypes.func,
+        onBackPress: PropTypes.func,
+        onBackdropPress: PropTypes.func,
+        style:View.propTypes.style
     }
     static defaultProps = {
-        animationType: 'slideUp',
-        backgroundColor: 'transparent',
-        easing:Easing.ease
+        isVisible: false,
+        animationType: 'slideRight',
+        easing: Easing.ease,
+        duration: 200
     }
     constructor(...props) {
         super(...props);
         this.state = {
-            show:false
+            visiable: false,
+            height:0,
+            width:0
         }
-        this.animatedValue = new Animated.Value(0);
+        this._animatedValue = new Animated.Value(0);
     }
     componentDidMount() {
-        if(this.props.visiable){
-            this._show()
+        if (this.props.isVisible) {
+            this._show();
         }
+        BackHandler.addEventListener('hardwareBackPress',this._onBackPress);
     }
-    componentDidUpdate(prevProps, prevState) {
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress',this._onBackPress);
+    }
+    
+    componentWillReceiveProps(nextProps) {
         
     }
     
-    _show(){
-
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.isVisible !== this.props.isVisible) {
+            if (this.props.isVisible) {
+                this._show();
+            } else {
+                this._hide();
+            }
+        }
     }
-    _onShow(){
-
-    }
-    _onHide(){
-        this.props.onRequestClose && this.props.onRequestClose();
-    }
-    _hide(){
+    _show() {
+        this.setState({visible:true});
         var easing = this.props.easing;
-        InteractionManager.runAfterInteractions(() => {
-            if (this.props.animationType == 'none') {
-                this.animated.setValue(0);
-                this._onHide();
-            } else {
-                Animated.timing(this.animated, {
-                    easing,
-                    toValue: 0,
-                    duration: 200
-                }).start(() => this._onHide());
-            }
-        })
+        if (this.props.animationType == 'none') {
+            this._animatedValue.setValue(1);
+            this.props.onShow && this.props.onShow();
+        } else {
+            Animated.timing(this._animatedValue, {
+                easing,
+                toValue: 1,
+                duration: this.props.duration
+            }).start(() => this._onShow && this._onShow());
+        }
     }
-    componentWillReceiveProps(){
-
+    _onShow() {
+        this.props.onModalShow && this.props.onModalShow();
     }
-    componentWillUnmount(){
-
+    _onHide() {
+        this.setState({visible:false});
+        this.props.onModalHide && this.props.onModalHide();
     }
-    componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
-            this.props.onDidMount && this.props.onDidMount(this);
-            if (this.props.animationType == 'none') {
-                this.animated.setValue(1);
-                this.props.onShow && this.props.onShow();
-            } else {
-                Animated.timing(this.animated, {
-                    easing: Easing.ease,
-                    toValue: 1,
-                    duration: 200
-                }).start(() => this.props.onShow && this.props.onShow());
-            }
-        })
+    _hide() {
+        var easing = this.props.easing;
+        if (this.props.animationType == 'none') {
+            this._animatedValue.setValue(0);
+            this._onHide();
+        } else {
+            Animated.timing(this._animatedValue, {
+                easing,
+                toValue: 0,
+                duration: this.props.duration
+            }).start(() => this._onHide());
+        }
     }
-
+    _onBackPress = ()=>{
+        this.props.onBackPress&&this.props.onBackPress();
+    }
+    _onBackdropPress = ()=>{
+        return this.props.onBackdropPress&&this.props.onBackdropPress();
+    }
+    _onLayout(e){
+        var {height,width} = e.nativeEvent.layout;
+        if(height!==this.state.height||width!==this.state.width){
+            this.setState({height,width});
+        }
+        this.props.onLayout && this.props.onLayout(e);
+    }
     render() {
-        let opacity, translateY,translateX;
+        if(!this.state.visible){
+            return null;
+        }
+        let opacity, translateY, translateX;
+        let {height,width} = this.state;
         switch (this.props.animationType) {
             case 'fade':
-                opacity = this.animated.interpolate({
+                opacity = this._animatedValue.interpolate({
                     inputRange: [0, 1],
                     outputRange: [0, 1]
                 });
@@ -101,25 +131,52 @@ export default class ModalUI extends Component {
                 translateX = 0;
                 break;
             case 'slideLeft':
-                
+                opacity = 1;
+                translateX = this._animatedValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-width, 0]
+                });
+                translateY = 0;
                 break;
             case 'slideRight':
+                opacity = 1;
+                translateX = this._animatedValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [width, 0]
+                });
+                translateY = 0;
                 break;
             case 'slideDown':
+                opacity = 1;
+                translateY = this._animatedValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-height, 0]
+                });
+                translateX = 0;
                 break;
             case 'slideUp':
+                opacity = 1;
+                translateY = this._animatedValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [height, 0]
+                });
+                translateX = 0;
                 break;
             default:
                 opacity = 1;
-                translateY = this.animated.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [window.height, 0]
-                });
+                translateY = 0;
+                translateX = 0;
         }
         return (
-            <Animated.View
-                children={this.props.children}
-                style={[styles.base, { opacity, transform: [{ translateY,translateX}] }]} />
+            <TouchView
+                onTouchEnd = {this._onBackdropPress}
+                activeOpacity = {1}
+                onLayout = {(e)=>this._onLayout(e)}
+                children={this.state.height&&this.state.width&&this.props.children||null}
+                style={[styles.base, 
+                        this.props.style,
+                        {opacity,
+                        transform: [{ translateY},{translateX}] }]} />
         );
     }
 }
@@ -131,9 +188,9 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        backgroundColor:'rgba(120,120,120,0.5)'
     }
 });
-Modal.propTypes = {
-    animationType: PropTypes.oneOf(['none', 'slide', 'fade'])
-}
+
+export default ModalUI;

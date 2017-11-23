@@ -9,29 +9,69 @@ import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import Modal from 'react-native-modalui';
 
 export default class App extends Component<{}> {
+  constructor(...props){
+    super(...props);
+    this.state = {
+      isVisible:false,
+      animationType:'none'
+    }
+  }
+  _showModal=(animationType)=>{
+    this.setState({isVisible:true,animationType})
+  }
+  _hideModal=()=>{
+    this.setState({isVisible:false})
+  }
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+        <TouchableOpacity 
+          style = {styles.button}
+          onPress = {()=>this._showModal('slideLeft')}>
+          <Text>FROM LEFT</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style = {styles.button}
+          onPress = {()=>this._showModal('slideRight')}>
+          <Text>FROM RIGHE</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style = {styles.button}
+          onPress = {()=>this._showModal('slideUp')}>
+          <Text>UP</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style = {styles.button}
+          onPress = {()=>this._showModal('slideDown')}>
+          <Text>DOWN</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style = {styles.button}
+          onPress = {()=>this._showModal('fade')}>
+          <Text>FADE</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style = {styles.button}
+          onPress = {()=>this._showModal('none')}>
+          <Text>NONE</Text>
+        </TouchableOpacity>
+        <Modal 
+          style={styles.container}
+          animationType = {this.state.animationType}
+          onBackdropPress = {this._hideModal}
+          isVisible = {this.state.isVisible}>
+        <TouchableOpacity 
+          style = {styles.button}
+          onPress = {this._hideModal}>
+          <Text>HIDE</Text>
+        </TouchableOpacity>
+        </Modal>
       </View>
     );
   }
@@ -42,16 +82,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  button:{
+    height:60,
+    width:120,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:'#667823'
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  text:{
+    color:'#333333'
+  }
 });
