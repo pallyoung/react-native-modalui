@@ -22,7 +22,6 @@ class ModalUI extends Component {
     static propTypes = {
         isVisible: PropTypes.bool,
         animationType: PropTypes.oneOf(['fade', 'slideUp', 'slideDown', 'slideLeft', 'slideRight', 'none']),
-        opacity: PropTypes.number,
         easing: PropTypes.any,
         onModalShow: PropTypes.func,
         onModalHide: PropTypes.func,
@@ -32,7 +31,7 @@ class ModalUI extends Component {
     }
     static defaultProps = {
         isVisible: false,
-        animationType: 'slideRight',
+        animationType: 'slideUp',
         easing: Easing.ease,
         duration: 200
     }
