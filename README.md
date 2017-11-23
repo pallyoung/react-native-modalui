@@ -1,4 +1,4 @@
-# react-native-modalui
+# react-native-modalui &middot; [![npm version](https://badge.fury.io/js/react-native-modalui.svg)](https://badge.fury.io/js/react-native-modalui) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 react-native-modalui provide you react-native modal with more animation type.
 
 * Features(#features)
