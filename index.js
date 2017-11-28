@@ -103,7 +103,11 @@ class ModalUI extends Component {
         }
     }
     _onBackPress = () => {
-        this.props.onBackPress && this.props.onBackPress();
+        if(this.props.onBackPress){
+            return this.props.onBackPress();
+        }else{
+            return false;
+        }
     }
     _onBackdropPress = () => {
         return this.props.onBackdropPress && this.props.onBackdropPress();
