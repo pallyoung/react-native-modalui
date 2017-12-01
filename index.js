@@ -13,7 +13,8 @@ import {
     Easing,
     Dimensions,
     InteractionManager,
-    BackHandler
+    BackHandler,
+    ViewStylePropTypes
 } from 'react-native';
 import PropTypes from 'prop-types';
 let { width, height } = Dimensions.get('window');
@@ -28,7 +29,7 @@ class ModalUI extends Component {
         onModalHide: PropTypes.func,
         onBackPress: PropTypes.func,
         onBackdropPress: PropTypes.func,
-        style: View.propTypes.style,
+        style: ViewStylePropTypes,
     }
     static defaultProps = {
         isVisible: false,
