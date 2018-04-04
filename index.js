@@ -29,7 +29,7 @@ class ModalUI extends Component {
         onModalHide: PropTypes.func,
         onBackPress: PropTypes.func,
         onBackdropPress: PropTypes.func,
-        style: ViewStylePropTypes,
+        style: PropTypes.object,
     }
     static defaultProps = {
         isVisible: false,
@@ -40,7 +40,7 @@ class ModalUI extends Component {
     constructor(...props) {
         super(...props);
         this.state = {
-            visiable: false,
+            visible: false,
             height: 0,
             width: 0
         }
