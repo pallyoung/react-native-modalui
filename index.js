@@ -14,11 +14,12 @@ import {
     Dimensions,
     InteractionManager,
     BackHandler,
+    TouchableOpacity,
     ViewStylePropTypes
 } from 'react-native';
 import PropTypes from 'prop-types';
 let { width, height } = Dimensions.get('window');
-const TouchView = Animated.createAnimatedComponent(View);
+const AnimatedView = Animated.createAnimatedComponent(View);
 class ModalUI extends Component {
     static propTypes = {
         isVisible: PropTypes.bool,
@@ -87,7 +88,6 @@ class ModalUI extends Component {
         this.props.onModalShow && this.props.onModalShow();
     }
     _onHide = () => {
-        this.setState({ visible: false });
         this.props.onModalHide && this.props.onModalHide();
     }
     _hide() {
@@ -104,9 +104,9 @@ class ModalUI extends Component {
         }
     }
     _onBackPress = () => {
-        if(this.props.onBackPress){
+        if (this.props.onBackPress) {
             return this.props.onBackPress();
-        }else{
+        } else {
             return false;
         }
     }
@@ -119,6 +119,14 @@ class ModalUI extends Component {
             this.setState({ height, width });
         }
         this.props.onLayout && this.props.onLayout(e);
+    }
+    _renderChildren() {
+        if (!this.state.height || !this.state.width || !this.props.children) {
+            return null;
+        }
+       
+
+        return this.props.children;
     }
     render() {
         if (!this.state.visible) {
@@ -172,18 +180,23 @@ class ModalUI extends Component {
                 translateY = 0;
                 translateX = 0;
         }
+        const Back = <TouchableOpacity
+                        activeOpacity={0}
+                        onPress={this._onBackdropPress}
+                        style={[styles.base, { backgroundColor: 'rgba(0,0,0,0)' }]} />;
         return (
-            <TouchView
-                onTouchEnd={this._onBackdropPress}
+            <AnimatedView
                 activeOpacity={1}
                 onLayout={(e) => this._onLayout(e)}
-                children={this.state.height && this.state.width && this.props.children || null}
                 style={[styles.base,
                 this.props.style,
                 {
                     opacity,
                     transform: [{ translateY }, { translateX }]
-                }]} />
+                }]} >
+                {Back}
+                {this._renderChildren()}
+            </AnimatedView>
         );
     }
 }
